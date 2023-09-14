@@ -1,4 +1,4 @@
-import { Timeline } from '@xzdarcy/react-timeline-editor';
+import { Timeline } from 'c8-react-timeline-editor';
 import { cloneDeep } from 'lodash';
 import React, { useEffect, useState } from 'react';
 import './index.less';
@@ -17,6 +17,7 @@ const TimelineEditor = () => {
         effects={mockEffect}
         hideCursor={false}
         autoScroll={true}
+        dragLine={true}
       />
     </div>
   );

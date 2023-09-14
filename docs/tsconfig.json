@@ -8,7 +8,7 @@
     "baseUrl": "../",
     "strict": false,
     "paths": {
-      "@xzdarcy/react-timeline-editor": ["src/index.tsx"]
+      "c8-react-timeline-editor": ["src/index.tsx"]
     },
     "allowSyntheticDefaultImports": true
   },

@@ -1,4 +1,4 @@
-import { Timeline, TimelineState } from '@xzdarcy/react-timeline-editor';
+import { Timeline, TimelineState } from 'c8-react-timeline-editor';
 import { Switch } from 'antd';
 import { cloneDeep } from 'lodash';
 import React, { useRef, useState } from 'react';
@@ -47,6 +47,7 @@ const TimelineEditor = () => {
           }
         }}
       />
+      AMK
     </div>
   );
 };
