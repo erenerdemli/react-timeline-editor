@@ -52,7 +52,6 @@ export const Cursor: FC<CursorProps> = ({
     <RowDnd
       start={startLeft}
       ref={rowRnd}
-      parentRef={areaRef}
       bounds={{
         left: 0,
         right: Math.min(timelineWidth, maxScaleCount * scaleWidth + startLeft - scrollLeft),
@@ -60,6 +59,12 @@ export const Cursor: FC<CursorProps> = ({
       deltaScrollLeft={deltaScrollLeft}
       enableDragging={!disableDrag}
       enableResizing={false}
+      draggableOptions={
+       { 
+        startAxis: 'x',
+        lockAxis:'x'
+        }
+      }
       onDragStart={() => {
         onCursorDragStart && onCursorDragStart(cursorTime);
         draggingLeft.current = parserTimeToPixel(cursorTime, { startLeft, scaleWidth, scale }) - scrollLeft;
@@ -91,7 +96,7 @@ export const Cursor: FC<CursorProps> = ({
         return false;
       }}
     >
-      <div className={prefix('cursor')}>
+      <div className={prefix('cursor')} data-id="cursor">
         <svg className={prefix('cursor-top')} width="8" height="12" viewBox="0 0 8 12" fill="none">
           <path
             d="M0 1C0 0.447715 0.447715 0 1 0H7C7.55228 0 8 0.447715 8 1V9.38197C8 9.76074 7.786 10.107 7.44721 10.2764L4.44721 11.7764C4.16569 11.9172 3.83431 11.9172 3.55279 11.7764L0.552786 10.2764C0.214002 10.107 0 9.76074 0 9.38197V1Z"

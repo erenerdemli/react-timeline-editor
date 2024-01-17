@@ -35,8 +35,9 @@ export const InteractComp: FC<{
         onstart: (e) => draggableOptionsRef.current.onstart && (draggableOptionsRef.current.onstart as (e: DragEvent) => any)(e),
         onmove: (e) => draggableOptionsRef.current.onmove && (draggableOptionsRef.current.onmove as (e: DragEvent) => any)(e),
         onend: (e) => draggableOptionsRef.current.onend && (draggableOptionsRef.current.onend as (e: DragEvent) => any)(e),
+        oninertiastart: (e) => draggableOptionsRef.current.oninertiastart && (draggableOptionsRef.current.oninertiastart as (e: DragEvent) => any)(e),
       });
-    if (resizable) interactable.current.resizable({ 
+    if (resizable) interactable.current.resizable({
       ...resizableOptionsRef.current,
       onstart: (e) => resizableOptionsRef.current.onstart && (resizableOptionsRef.current.onstart as (e: DragEvent) => any)(e),
       onmove: (e) => resizableOptionsRef.current.onmove && (resizableOptionsRef.current.onmove as (e: DragEvent) => any)(e),

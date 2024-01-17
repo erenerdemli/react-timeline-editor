@@ -234,6 +234,10 @@ export const EditAction: FC<EditActionProps> = ({
         }}
         className={prefix((classNames || []).join(' '))}
         style={{ height: rowHeight }}
+        data-testid="context-menu"
+        data-id="actionitem"
+        data-row-id={row.id}
+        data-action-id={action?.id || 'null'}
       >
         {getActionRender && getActionRender(nowAction, nowRow)}
         {flexible && <div className={prefix('action-left-stretch')} />}

@@ -9,10 +9,11 @@ import { Cursor } from './cursor/cursor';
 import { EditArea } from './edit_area/edit_area';
 import './timeline.less';
 import { TimeArea } from './time_area/time_area';
+import interact from 'interactjs';
 
 export const Timeline = React.forwardRef<TimelineState, TimelineEditor>((props, ref) => {
   const checkedProps = checkProps(props);
-  const { style } = props;
+  const { style, onDrop } = props;
   let {
     effects,
     editorData: data,
@@ -29,12 +30,15 @@ export const Timeline = React.forwardRef<TimelineState, TimelineEditor>((props, 
     engine,
     autoReRender = true,
     onScroll: onScrollVertical,
+    onCollisionActive,
+    onCollisionInActive,
   } = checkedProps;
 
   const engineRef = useRef<ITimelineEngine>(engine || new TimelineEngine());
   const domRef = useRef<HTMLDivElement>();
   const areaRef = useRef<HTMLDivElement>();
   const scrollSync = useRef<ScrollSync>();
+  const editorDataRef = useRef<TimelineRow[]>(data);
 
   // 编辑器数据
   const [editorData, setEditorData] = useState(data);
@@ -46,6 +50,132 @@ export const Timeline = React.forwardRef<TimelineState, TimelineEditor>((props, 
   const [isPlaying, setIsPlaying] = useState(false);
   // 当前时间轴宽度
   const [width, setWidth] = useState(Number.MAX_SAFE_INTEGER);
+
+  useEffect(() => {
+    interact('.timeline-editor-edit-row').dropzone({
+      accept: '.timeline-editor-action',
+      overlap: 0.4,
+      ondropactivate: function (event) {
+        // add active dropzone feedback
+        event.target.classList.add('drop-active');
+      },
+      ondragenter: function (event) {
+        let draggableElement = event.relatedTarget;
+        let dropzoneElement = event.target;
+        // feedback the possibility of a drop
+        dropzoneElement.classList.add('drop-target');
+        draggableElement.classList.add('can-drop');
+        // draggableElement.textContent = 'Dragged in';
+      },
+      ondragleave: function (event) {
+        // remove the drop feedback style
+        event.target.classList.remove('drop-target');
+        event.relatedTarget.classList.remove('can-drop');
+        // event.relatedTarget.textContent = 'Dragged out';
+      },
+      ondrop: function (event) {
+        console.log("On Drop to Dropzone")
+        if (event) {
+          event.stopPropagation();
+        }
+        const rowId = event.currentTarget.getAttribute('data-row-id');
+        console.log("On Drop to Dropzone with row id",rowId)
+        /**
+         * Not Dropped on to a Row, Skip
+         */
+        if(!rowId){
+          alert('not a row')
+          return
+        }
+        const actionId = event.relatedTarget.getAttribute('data-action-id');
+        let droppedRowData = null;
+        let oldRowId = null;
+        let actionData = null;
+
+        editorDataRef.current.forEach((f) => {
+          const hasAction = f.actions.find((e) => e.id === actionId);
+          if (hasAction) {
+            oldRowId = f.id;
+            actionData = hasAction;
+            const { actions, ...restProps } = f;
+            droppedRowData = restProps;
+          }
+        });
+        if (oldRowId === rowId) return;
+        if (!Array.isArray(editorDataRef.current)) return null;
+
+        const modifiedEditorData = editorDataRef.current.map((er) => {
+          if (er.id === rowId) {
+            const currActions = er.actions || [];
+            const updatedActions = currActions.concat(actionData);
+            const nonNullActions = updatedActions.filter((f) => !!f);
+            return {
+              ...er,
+              actions: nonNullActions,
+            };
+          } else if (er.id === oldRowId) {
+            const updatedActions = er.actions.filter((f) => f.id !== actionData.id);
+            const nonNullActions = updatedActions.filter((f) => !!f);
+            return {
+              ...er,
+              actions: nonNullActions,
+            };
+          }
+          return er;
+        });
+        // update actions
+        setEditorData(modifiedEditorData);
+        handleEditorDataChange(modifiedEditorData);
+        if (onDrop) {
+          onDrop(rowId, actionId);
+        }
+      },
+      ondropdeactivate: function (event) {
+        event.stopPropagation();
+        // remove active dropzone feedback
+        event.target.classList.remove('drop-active');
+        event.target.classList.remove('drop-target');
+        event.relatedTarget.style.removeProperty('top');
+      },
+    });
+  }, []);
+
+  useEffect(() => {
+    interact('div[data-id="actionitem"]').dropzone({
+      accept: '.timeline-editor-action',
+      overlap: 0.01,
+      ondropactivate: function (event) {
+        // add active dropzone feedback
+        //console.log('running dropactivate collison');
+      },
+
+      ondragenter: function (event) {
+        event.target.classList.add('collison-active');
+        if (onCollisionActive) {
+          //onCollisionActive(targetRowId, targetActionId, true);
+        }
+        // dropzoneElement.classList.add('drop-target');
+        // draggableElement.classList.add('can-drop');
+        // draggableElement.textContent = 'Dragged in';
+      },
+      ondragleave: function (event) {
+        // remove the drop feedback style
+        event.target.classList.remove('collison-active');
+        if (onCollisionInActive) {
+          onCollisionInActive();
+        }
+        // event.target.classList.remove('drop-target');
+        // event.relatedTarget.classList.remove('can-drop');
+        // event.relatedTarget.textContent = 'Dragged out';
+      },
+
+      ondropdeactivate: function (event) {
+        event.stopPropagation();
+        // remove active dropzone feedback
+        event.target.classList.remove('collison-active');
+      },
+    });
+  }, []);
 
   /** 监听数据变化 */
   useLayoutEffect(() => {

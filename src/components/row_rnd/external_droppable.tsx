@@ -173,10 +173,8 @@ export const RowDnd = React.forwardRef<RowRndApi, RowRndProps>(
     };
 
     const handleMove = (e: DragEvent) => {
-
       const target = e.target;
       if (deltaScrollLeft && parentRef?.current) {
-        console.log("as Parent")
         const result = dealDragAutoScroll(e, (delta) => {
           deltaScrollLeft(delta);
 
@@ -192,7 +190,6 @@ export const RowDnd = React.forwardRef<RowRndApi, RowRndProps>(
         });
         if (!result) return;
       }
-      console.log("zas Parent")
 
       let { left, width, top } = target.dataset;
       const preLeft = parseFloat(left);

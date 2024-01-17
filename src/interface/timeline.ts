@@ -202,6 +202,30 @@ export interface EditData {
    * @description 点击时间区域事件, 返回false时阻止设置时间
    */
   onClickTimeArea?: (time: number, e: React.MouseEvent<HTMLDivElement, MouseEvent>) => boolean | undefined;
+
+  /**
+   * action item dropped to new row.
+   * @param rowId row id dropped to
+   * @param actionId action item id that got dropped to a rowid
+   * @returns
+   */
+    onDrop?: (rowId, actionId) => void;
+
+
+  /**
+   * action item for a current collision row id and action id
+   * @param rowId row id dropped to
+   * @param actionId action item id that got dropped to a rowid
+   * @returns
+   */
+  onCollisionActive?: (rowId: string, actionId: string, isCollisionActive: boolean) => void;
+  
+  /**
+   *
+   * @returns when inactive collision triggered
+   */
+  onCollisionInActive?: () => void;
+  
 }
 
 export interface TimelineState {

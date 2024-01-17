@@ -1,15 +1,19 @@
 import { cloneDeep } from 'lodash';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import './index.less';
 import { mockData, mockEffect } from './mock';
-import { Timeline, } from '../../../src/components/timeline';
+import { Timeline, TimelineAction, InteractComp } from 'c8-react-timeline-editor';
 import interact from 'interactjs';
 import { RowDnd } from '../../../src/components/row_rnd/row_rnd';
 import { EditAction } from '../../../src/components/edit_area/edit_action';
+import { Interactable } from '@interactjs/types';
+import { prefix } from '../../../src/utils/deal_class_prefix';
+
 const defaultEditorData = cloneDeep(mockData);
 
 const TimelineEditor = () => {
   const [data, setData] = useState(defaultEditorData);
+  const interactable = useRef<Interactable>();
 
   React.useEffect(() => {
     console.log('data updated', data);
@@ -36,29 +40,46 @@ const TimelineEditor = () => {
     console.log('handleOnContextMenuRow', params);
   };
 
+  const classNames = ['action'];
+
   return (
     <>
 
-{/* <EditAction
-action={{id:'1003404', effectId:null,start:0, end:100,selected:false}}
-data-id="1001"
-  row={{id:"1001",classNames:["dd"], rowHeight:100,selected:false}}
 
-  scaleCount={1}
-  setScaleCount={()=>{}}
-  timelineWidth={100}
-  editorData={[]}
-><div>EditRow demo</div></EditAction> */}
-<div className='timeline-editor-action' data-id="actionitem" data-action-id="495959">Dem2MEm</div>
-<RowDnd key="444444" 
-        classNamesX="action"
-        data-id="actionitem"
-data-action-id="20002"><div>DEMO DROP</div></RowDnd>
+<RowDnd
+  onDrop={(e)=>{
+    console.log("ExternalDropped", e)
+  }}
+  draggableOptions={
+    {
+      onend : (e)=>console.log("On End",e)
+    }
+  }
+  enableResizing={false}
+>
+          <div  style={{position:"relative", width:'100px', maxWidth:"100px"}}  className='timeline-editor-action timeline-editor-action-movable timeline-editor-action-flexible timeline-editor-action-effect-effect0' data-action-id="action001" data-id="actionitem">RowDnd</div>
 
-    <br /><br /><br /><br /><br /><br /><br />
+          </RowDnd>
+          <br></br>
+          <InteractComp
+            interactRef={interactable}
+            draggable
+            draggableOptions={{}}
+            resizable={false}
+            resizableOptions={null}
+          >
+          <div  data-row-id={0} style={{position:"relative", width:'100px', maxWidth:"100px"}}  className='timeline-editor-action timeline-editor-action-movable timeline-editor-action-flexible timeline-editor-action-effect-effect0' data-action-id="action001" data-id="actionitem">InteractComp</div>
+
+          </InteractComp>
+        
+    <br></br>
+
+
     <div className="timeline-editor-example0">
       <Timeline
-        onChange={setData}
+        onChange={(e)=>{
+          console.log(e)
+        }}
         editorData={data}
         effects={mockEffect}
         hideCursor={false}

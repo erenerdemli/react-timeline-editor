@@ -159,13 +159,14 @@ export const EditArea = React.forwardRef<EditAreaState, EditAreaProps>((props, r
           // 获取全部高度
           let totalHeight = 0;
           // 高度列表
+          debugger
           const heights = editorData.map((row) => {
             const itemHeight = row.rowHeight || rowHeight;
             totalHeight += itemHeight;
             return itemHeight;
           });
           if (totalHeight < height) {
-            heights.push(height - totalHeight);
+            //heights.push(height - totalHeight);
             if (heightRef.current !== height && heightRef.current >= 0) {
               setTimeout(() =>
                 gridRef.current?.recomputeGridSize({
@@ -175,7 +176,7 @@ export const EditArea = React.forwardRef<EditAreaState, EditAreaProps>((props, r
             }
           }
           heightRef.current = height;
-
+          console.log("Heights:",heights)
           return (
             <Grid
               columnCount={1}
